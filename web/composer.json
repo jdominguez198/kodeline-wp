@@ -1,0 +1,27 @@
+{
+  "repositories": [
+    {
+      "type": "package",
+      "package": {
+        "name": "wordpress",
+        "type": "webroot",
+        "version": "4.9.8",
+        "dist": {
+          "type": "zip",
+          "url": "https://github.com/WordPress/WordPress/archive/4.9.8.zip"
+        },
+        "require": {
+          "fancyguy/webroot-installer": "1.0.0"
+        }
+      }
+    }
+  ],
+  "require": {
+    "wordpress": "4.9.8",
+    "fancyguy/webroot-installer": "1.0.0"
+  },
+  "extra": {
+    "webroot-dir": "html",
+    "webroot-package": "wordpress"
+  }
+}

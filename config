@@ -1,0 +1,7 @@
+#!/bin/bash
+
+export DOCKER_FOLDER="tools/docker"
+export GULP_FOLDER="tools/gulp"
+export WEB_FOLDER="web"
+
+DOCKER_COMPOSE="docker-compose -f docker-compose.yml"
