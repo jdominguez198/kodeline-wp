@@ -3,25 +3,20 @@ set -eu
 
 cd ${ABSOLUTE_PATH}/${DOCKER_FOLDER}
 
+if [ ! -e .env ]; then
+    echo "You must create a .env file at ${DOCKER_FOLDER}"
+    exit 1
+fi
+
 # Start all containers
+echo "Starting all containers..."
 docker-compose up -d
 
-# Execute composer installation for dependencies
-docker-compose exec web composer install
-
-# Add all settings needed
-docker-compose exec web ./install-configs.sh
-
-# Create the database
-docker-compose exec web php install-db.php
-
-# Optional! Install a basic theme
-cd ${ABSOLUTE_PATH}/${WEB_FOLDER}
-git clone git@bitbucket.org:kodeline/wp-theme-kodeline.git theme
-cp -R theme/wp-content/. html/wp-content/
-rm -rf html/wp-content/themes/twenty*
-cd ${ABSOLUTE_PATH}/${DOCKER_FOLDER}
-docker exec -i $(docker-compose ps -q db) mysql -uwordpress -pwordpress wordpress < ${ABSOLUTE_PATH}/${WEB_FOLDER}/theme/database/dump.sql
+echo "Launching installation inside web container..."
+docker-compose exec web /entry-point.sh
 
 # Stop all containers
+echo "Stopping all containers..."
 docker-compose stop
+
+echo "Installation complete!"

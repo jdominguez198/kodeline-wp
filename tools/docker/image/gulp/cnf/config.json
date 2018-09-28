@@ -1,0 +1,6 @@
+{
+  "public_url": "http://web:80/",
+  "browsersync_port": ${BROWSERSYNC_PORT},
+  "theme_name": "kodeline",
+  "theme_location": "/var/www/html/wp-content/themes/"
+}

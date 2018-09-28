@@ -40,7 +40,7 @@ usage()
 
 init_dirs
 source ${LIB_DIR}/color_properties
-source ${ABSOLUTE_PATH}/config
+source ${ABSOLUTE_BIN_PATH}/config
 
 if [ "$#" == 0 ] || [ "$1" == "--help" ]; then
   usage

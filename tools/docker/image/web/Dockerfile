@@ -1,4 +1,12 @@
-FROM php:5.6-apache
+FROM php:5.6-apache-jessie
+
+RUN apt-get update && \
+        apt-get install -y --no-install-recommends \
+            wget \
+            unzip \
+            git \
+            mysql-client \
+    ; \
 
 # install the PHP extensions we need
 RUN set -ex; \
@@ -14,13 +22,10 @@ RUN set -ex; \
 	docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr; \
 	docker-php-ext-install gd mysqli opcache zip; \
 	\
-    apt-get install -y wget; \
-    apt-get install -y unzip; \
-
     # Composer installation
     wget https://raw.githubusercontent.com/composer/getcomposer.org/1b137f8bf6db3e79a38a5bc45324414a6b1f9df2/web/installer -O - -q | php -- --quiet; \
     mv composer.phar /usr/local/bin/composer; \
-
+    \
     # reset apt-mark's "manual" list so that "purge --auto-remove" will remove all build dependencies
 	apt-mark auto '.*' > /dev/null; \
 	apt-mark manual $savedAptMark; \
@@ -50,3 +55,11 @@ RUN a2enmod rewrite expires
 
 VOLUME /var/www
 WORKDIR /var/www
+
+RUN mkdir /var/www-conf
+COPY cnf/.htaccess /var/www-conf/.htaccess
+COPY cnf/composer.json /var/www-conf/composer.json
+COPY cnf/install-configs.sh /var/www-conf/install-configs.sh
+COPY cnf/install-theme.sh /var/www-conf/install-theme.sh
+COPY cnf/install-db.php /var/www-conf/install-db.php
+COPY entry-point.sh /entry-point.sh

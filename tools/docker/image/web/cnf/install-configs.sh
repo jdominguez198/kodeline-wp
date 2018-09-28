@@ -1,6 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
+mkdir -p /var/www/html
 cd /var/www/html
 user='www-data'
 group='www-data'
@@ -126,12 +127,8 @@ if [ "$haveConfig" ]; then
 
 fi
 
-for e in "${envs[@]}"; do
-    unset "$e"
-done
-
 # Create htaccess file if does not exists
 if [ ! -e .htaccess ]; then
-    cp /var/www/.htaccess /var/www/html/.htaccess
+    cp /var/www-conf/.htaccess /var/www/html/.htaccess
     chown "$user:$group" .htaccess
 fi

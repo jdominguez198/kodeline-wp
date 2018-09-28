@@ -2,32 +2,61 @@ version: '3.3'
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:${MYSQL_VERSION}
     ports:
-    - "8306:3306"
+      - "${MYSQL_PORT}:3306"
     volumes:
-    - db_data:/var/lib/mysql
+      - db_data:/var/lib/mysql
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: somewordpress
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpress
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
 
   web:
     depends_on:
     - db
     build: ./image/web
-    image: web:1.0
+    image: web:0.0.1
     ports:
-    - "8000:80"
+      - "${WEB_PORT}:80"
     volumes:
-      - ../../web/:/var/www:delegated
+      - "${WEB_ROOT_FOLDER}:/var/www:delegated"
     restart: always
     environment:
       WORDPRESS_DB_HOST: db:3306
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpress
-      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DB_USER: ${MYSQL_USER}
+      WORDPRESS_DB_PASSWORD: ${MYSQL_PASSWORD}
+      WORDPRESS_DB_NAME: ${MYSQL_DATABASE}
+      WORDPRESS_SITE_PORT: ${BROWSERSYNC_PORT}
+      WORDPRESS_VERSION: ${WP_VERSION}
+      WORDPRESS_ADMIN_USER: ${WP_ADMIN_USER}
+      WORDPRESS_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WORDPRESS_THEME_REPOSITORY: ${WP_THEME_REPOSITORY}
+      WORDPRESS_THEME_REPOSITORY_USER: ${WP_THEME_REPOSITORY_USER}
+      WORDPRESS_THEME_REPOSITORY_PASSWORD: ${WP_THEME_REPOSITORY_PASSWORD}
+
+  gulp:
+    depends_on:
+      - web
+    build:
+      context: ./image/gulp
+      args:
+        TOOLSET_VERSION: ${TOOLSET_VERSION}
+        BROWSERSYNC_PORT: ${BROWSERSYNC_PORT}
+    image: gulp:1.0
+    ports:
+      - "${BROWSERSYNC_PORT}:${BROWSERSYNC_PORT}"
+      - "${BROWSERSYNC_ADMIN_PORT}:3001"
+    volumes:
+      - "${WEB_ROOT_FOLDER}:/var/www:delegated"
+    restart: always
+    environment:
+      TOOLSET_VERSION: ${TOOLSET_VERSION}
+      BROWSERSYNC_PORT: ${BROWSERSYNC_PORT}
+    links:
+      - web
+
 volumes:
   db_data:

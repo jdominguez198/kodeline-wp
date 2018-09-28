@@ -15,11 +15,11 @@ $user = getenv('WORDPRESS_DB_USER');
 $pass = getenv('WORDPRESS_DB_PASSWORD');
 $dbName = getenv('WORDPRESS_DB_NAME');
 $maxTries = 10;
-echo sprintf('Connecting to \'%s:%s\' with user \'%s\' and password \'%s\'...', $host, $port, $user, $pass);
+echo sprintf('Connecting to \'%s:%s\' with user \'%s\' and password \'%s\'...' . PHP_EOL, $host, $port, $user, $pass);
 do {
     $mysql = new mysqli($host, $user, $pass, '', $port, $socket);
     if ($mysql->connect_error) {
-        fwrite($stderr, "\n" . 'MySQL Connection Error: (' . $mysql->connect_errno . ') ' . $mysql->connect_error . "\n");
+        fwrite($stderr, "\n" . 'MySQL Connection Error: (' . $mysql->connect_errno . ') ' . $mysql->connect_error . PHP_EOL);
         --$maxTries;
         if ($maxTries <= 0) {
             exit(1);
@@ -28,7 +28,7 @@ do {
     }
 } while ($mysql->connect_error);
 if (!$mysql->query('CREATE DATABASE IF NOT EXISTS `' . $mysql->real_escape_string($dbName) . '`')) {
-    fwrite($stderr, "\n" . 'MySQL "CREATE DATABASE" Error: ' . $mysql->error . "\n");
+    fwrite($stderr, PHP_EOL . 'MySQL "CREATE DATABASE" Error: ' . $mysql->error . PHP_EOL);
     $mysql->close();
     exit(1);
 }

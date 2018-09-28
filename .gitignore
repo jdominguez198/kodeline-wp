@@ -4,7 +4,6 @@
 out
 gen
 
-web/html
-web/theme
-web/vendor
-web/composer.lock
+web/*
+!web/.gitkeep
+.env
